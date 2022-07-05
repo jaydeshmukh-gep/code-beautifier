@@ -3,6 +3,7 @@ import './Home.scss';
 import React, {useState, useEffect} from 'react'
 import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
 import Select from 'react-dropdown-select';
+import { saveAs } from "file-saver";
 // var beautify = require('js-beautify').js;
 
 var axios = require('axios');
@@ -46,10 +47,42 @@ function Home() {
 
     const [selectedLanguage, setSelectedLanguage] = useState('Javascript');
     const [code, setCode] = useState(placeholders[selectedLanguage]);
+    var out = [];
 
     function handleEditorChange(value, event) {
         setCode(value);
       }
+
+    // function validate() {
+    //     var data = qs.stringify({
+    //         'code': code
+    //       });
+    //     var route = 'validatecss';
+    //     var config = {
+    //         method: 'post',
+    //         url: 'http://localhost:8000/' + route,
+    //         mode: 'no-cors',
+    //         headers: { 
+    //           'Content-Type': 'application/x-www-form-urlencoded'
+    //         },
+    //         data : data
+    //       };
+    //       axios(config)
+    //         .then(function (response) {
+    //             // console.log(response.data.data)
+    //             var res = JSON.stringify(response.data);
+    //             console.log(res);
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error);
+    //         });
+    // }
+
+    function handleEditorValidation(markers) {
+        // model markers
+        // console.log("onValidate:", marker.message)
+        markers.forEach(marker => console.log("onValidate:", marker.message));
+    }
 
     function handleSubmit() {
         var current_options = js_options;
@@ -113,10 +146,14 @@ function Home() {
                         path={selectedLanguage.toLowerCase()}
                         defaultValue={placeholders[selectedLanguage]}
                         theme="vs-dark"
+                        onValidate={handleEditorValidation}
                         onChange={handleEditorChange}
                         value={code}
                     />
                 </div>
+                {/* <div className='text'>
+                    <p value={out}></p>
+                </div> */}
                 <div className="footer">
                     <span className="button2" onClick={()=>{setCode(placeholders[selectedLanguage])}}>Sample</span>
                     {/* <span className="button2" onClick={()=>{setCode('SELECT * FROM tbl')}}>Sample SQL</span>
@@ -124,7 +161,9 @@ function Home() {
     <span className="button2" onClick={()=>{setCode('menu{color:red} navigation{background-color:#333}')}}>Sample CSS</span>
     <span className="button2" onClick={()=>{setCode(placeholders['JSON'])}}>Sample JSON</span> */}
                     <span className="button2">Copy</span>
+                    <span className='button2'>Download</span>
                     <span className="button" onClick={handleSubmit}>Beautify</span>
+                    <span className="button" >Validate</span>
                 </div>
                 </div>
                 <div className="right">
@@ -204,24 +243,22 @@ export default Home
 const placeholders = {
     'Javascript': '// this is text a=b\nvar a=10,b=0;',
     'SQL': 'SELECT * from table;',
-    'HTML': `<section class="wrapper">
-    <ul>
-    <li
-    v-for="(item, i) in list"
-    :key="i"
-    >
-    <SomeVueComponent
-    size="1.5rem"
-    v-html="getIcon('tickIcon').html"
-    />
-    <span>{{ item }}</span>
-    </li>
-    </ul>
-    <a
-    class="some-link"
-    href="#"
-    >Link</a>
-    </section>`,
+    'HTML': `<Html>    
+    <Head>  
+    <title>  
+    Example of Paragraph tag  
+    </title>  
+    </Head>  
+    <Body>   
+    <p> <!-- It is a Paragraph tag for creating the paragraph -->  
+    <b> HTML </b> stands for <i> <u> Hyper Text Markup Language. </u> </i> It is used to create a web pages and applications. This language   
+    is easily understandable by the user and also be modifiable. It is actually a Markup language, hence it provides a flexible way for designing the  
+    web pages along with the text.   
+    </p>  
+    HTML file is made up of different elements. <b> An element </b> is a collection of <i> start tag, end tag, attributes and the text between them</i>.   
+    </p>  
+    </Body>  
+    </Html> `,
     'CSS': 'menu{color:red} navigation{background-color:#333}',
     'JSON': `{  "bool": true,
     "short array": [1, 2, 3],

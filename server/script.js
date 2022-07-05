@@ -7,6 +7,7 @@ var pretty = require('pretty');
 var cssbeautify = require('cssbeautify');
 const jsonFormatter = require('json-string-formatter');
 const fmt2json = require('format-to-json');
+// const cssValidator = require('w3c-css-validator');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -40,6 +41,13 @@ app.post('/css',css);
 function css(req, res){
     res.send(beautifyCSS(req.body.code));
 }
+
+// app.post('/validatecss',css);
+// function css(req, res){
+//     res.send(validateCss(req.body.code));
+// }
+
+
 app.post('/html',html);
 function html(req, res){
     res.send(beautifyHTML(req.body.code));
@@ -93,3 +101,8 @@ async function beautifyJSON (source, options={}) {
         return fmt2json(source, new_options).then(res => res.result);
         return res.result;
    }    
+
+// async function validateCss (source) {
+//     const result = await cssValidator.validateText(source);
+//     return result;
+// }
