@@ -39,7 +39,7 @@ function json(req, res){
 }
 app.post('/css',css);
 function css(req, res){
-    res.send(beautifyCSS(req.body.code));
+    res.send(beautifyCSS(req.body.code, req.body));
 }
 
 // app.post('/validatecss',css);
@@ -50,11 +50,11 @@ function css(req, res){
 
 app.post('/html',html);
 function html(req, res){
-    res.send(beautifyHTML(req.body.code));
+    res.send(beautifyHTML(req.body.code, req.body));
 }
 app.post('/sql',sql);
 function sql(req, res){
-    res.send(beautifySQL(req.body.code));
+    res.send(beautifySQL(req.body.code, req.body));
 }
 app.post('/js',js);
 function js(req, res){
@@ -74,19 +74,28 @@ function beautifyJavaScript (source, options = {}) {
     // console.log(res);
     return res;
    }
-function beautifySQL (source) {
-        var res = format(source);
+function beautifySQL (source, options = {}) {
+    var new_options = {
+        'language' : (options.language),
+        'tabWidth' : parseInt(options.tabWidth),
+        'useTabs' : (options.useTabs === 'true'),
+        'keywordCase' : (options.keywordCase),
+        'linesBetweenQueries' : parseInt(options.linesBetweenQueries),
+    }
+        var res = format(source, new_options);
         return res;
    }
-function beautifyHTML (source) {
-        var res = pretty(source);
+function beautifyHTML (source, options = {}) {
+    var new_options = {
+        'ocd' : (options.ocd === 'true'),
+    }
+        var res = pretty(source, new_options);
         return res;
    }
-function beautifyCSS (source) {
+function beautifyCSS (source, options = {}) {
         var res = cssbeautify(source, {
-            indent: '  ',
-            // openbrace: 'separate-line',
-            // autosemicolon: true
+            indent: (' '.repeat(parseInt(options.indent))),
+            autosemicolon: (options.autosemicolon === 'true'),
         });
         return res;
    }

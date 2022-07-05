@@ -5,6 +5,7 @@ import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
 import Select from 'react-dropdown-select';
 import { saveAs } from "file-saver";
 // var beautify = require('js-beautify').js;
+import toast, { Toaster } from 'react-hot-toast';
 
 var axios = require('axios');
 var qs = require('qs');
@@ -29,6 +30,17 @@ const indentoptions = [
     { value: '10', label: '10' },
   ];
 
+function generateOptions(values){
+    var res = [];
+    for(var i = 0; i < values.length; i++){
+        res.push({
+            value: values[i],
+            label: values[i],
+        })
+    }
+    return res;
+}
+
 var js_options = {
     'indent_size' : 2,
     "indent_with_tabs": false,
@@ -42,6 +54,20 @@ var json_options = {
     'escape' : false,
     'unscape ' : false,
 }
+var SQL_options = {
+    'language' : 'sql',
+    'tabWidth' : 2,
+    'useTabs' : false,
+    'keywordCase' : 'preserve',
+    'linesBetweenQueries' : 1,
+}
+var html_options = {
+    'ocd' : true,
+}
+var css_options = {
+    'indent' : 2,
+    'autosemicolon': false,
+}
 
 function Home() {
 
@@ -53,6 +79,7 @@ function Home() {
         setCode(value);
       }
 
+<<<<<<< HEAD
     // function validate() {
     //     var data = qs.stringify({
     //         'code': code
@@ -83,10 +110,19 @@ function Home() {
         // console.log("onValidate:", marker.message)
         markers.forEach(marker => console.log("onValidate:", marker.message));
     }
+=======
+    function handleCopy(){
+        navigator.clipboard.writeText(code);
+        toast.success('Copied to clipboard');
+      }
+>>>>>>> 4cbc0fc0d07001ad03ca43ddc47f6414ac6302ce
 
     function handleSubmit() {
         var current_options = js_options;
         if(selectedLanguage === 'JSON') current_options = json_options;
+        if(selectedLanguage === 'SQL') current_options = SQL_options;
+        if(selectedLanguage === 'HTML') current_options = html_options;
+        if(selectedLanguage === 'CSS') current_options = css_options;
         var data = qs.stringify({
             'code': code,
             ...current_options,
@@ -160,8 +196,12 @@ function Home() {
                     <span className="button2" onClick={()=>{setCode(placeholders['HTML'])}}>Sample HTML</span>
     <span className="button2" onClick={()=>{setCode('menu{color:red} navigation{background-color:#333}')}}>Sample CSS</span>
     <span className="button2" onClick={()=>{setCode(placeholders['JSON'])}}>Sample JSON</span> */}
+<<<<<<< HEAD
                     <span className="button2">Copy</span>
                     <span className='button2'>Download</span>
+=======
+                    <span className="button2" onClick={handleCopy}>Copy</span>
+>>>>>>> 4cbc0fc0d07001ad03ca43ddc47f6414ac6302ce
                     <span className="button" onClick={handleSubmit}>Beautify</span>
                     <span className="button" >Validate</span>
                 </div>
@@ -228,6 +268,60 @@ function Home() {
                             <Select
                                 options={truefalseoptions}
                                 onChange={(values) => {json_options = {...json_options, 'unscape': values[0].value}}}
+                                placeholder = {'False'}
+                            />
+                        </> : selectedLanguage === 'SQL' ? 
+                        <>
+                        <h3>SQL dialect</h3>
+                            <Select
+                                options={generateOptions(['sql', 'bigquery', 'db2', 'hive', 'mariadb', 'mysql', 'postgresql', 'spark', 'sqlite'])}
+                                onChange={(values) => {SQL_options = {...SQL_options, 'language': values[0].value}}}
+                                placeholder = {'sql'}
+                            />
+                        <h3>Tab width</h3>
+                            <Select
+                                options={generateOptions(['0', '2', '4', '6', '8', '10'])}
+                                onChange={(values) => {SQL_options = {...SQL_options, 'tabWidth': values[0].value}}}
+                                placeholder = {'2'}
+                            />
+                        <h3>Use tabs</h3>
+                            <Select
+                                options={generateOptions(['true', 'false'])}
+                                onChange={(values) => {SQL_options = {...SQL_options, 'useTabs': values[0].value}}}
+                                placeholder = {'false'}
+                            />
+                        <h3>Keyword Case</h3>
+                            <Select
+                                options={generateOptions(['preserve', 'upper', 'lower'])}
+                                onChange={(values) => {SQL_options = {...SQL_options, 'keywordCase': values[0].value}}}
+                                placeholder = {'preserve'}
+                            />
+                        <h3>Lines between queries</h3>
+                            <Select
+                                options={generateOptions(['0', '1', '2', '3'])}
+                                onChange={(values) => {SQL_options = {...SQL_options, 'linesBetweenQueries': values[0].value}}}
+                                placeholder = {'1'}
+                            />
+                        </> : selectedLanguage === 'HTML' ? 
+                        <>
+                            <h3>OCD</h3>
+                            <Select
+                                options={truefalseoptions}
+                                onChange={(values) => {html_options = {...html_options, 'ocd': values[0].value}}}
+                                placeholder = {'True'}
+                            />
+                        </> : selectedLanguage === 'CSS' ? 
+                        <>
+                            <h3>Indent size</h3>
+                            <Select
+                                options={indentoptions}
+                                onChange={(values) => {css_options = {...css_options, 'indent': values[0].value}}}
+                                placeholder = {'2'}
+                            />
+                            <h3>Auto semicolon</h3>
+                            <Select
+                                options={truefalseoptions}
+                                onChange={(values) => {css_options = {...css_options, 'autosemicolon': values[0].value}}}
                                 placeholder = {'False'}
                             />
                         </> : null
